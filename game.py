@@ -61,7 +61,7 @@ WIN_CONDS = [
 # This AI will be using an algorithm called Alpha-Beta search
 # As mentioned above, I reference this video in the READme file --  the video is by Sebastian Lague
 
-def AlphaBeta(node, depth, alpha, beta, history = None, max_depth = DEPTH):
+def alphaBeta(node, depth, alpha, beta, history = None, max_depth = DEPTH):
     if depth == max_depth:
         history = {move: 0 for move in validMoves(node.board)}
 
@@ -201,15 +201,14 @@ def processNode(node):
 
 def playMove(board):
     moves = validMoves(board)
-
-    next_boards = [placePiece(board, moves, player=1) for move in moves]
+    next_boards = [placePiece(board, move, player=1) for move in moves]
     next_nodes = [EnemyNode(board) for board in next_boards]
     with Pool(PROCESS_CT) as p:
         scores = p.map(processNode, next_nodes)
     moves_scores = sorted(zip(moves, scores), key=lambda x: x[1])
     best_move = moves_scores[-1][0]
     return best_move
-
+    
 
 if __name__ == '__main__':
     board = np.zeros(boardsize)
@@ -220,7 +219,7 @@ if __name__ == '__main__':
         print('='*30)
 
         # now flip the board and play the next move
-        board = board *-1
+        board = board*-1
         comp_move = playMove(board)
         board = placePiece(board, comp_move, player=1)
 
